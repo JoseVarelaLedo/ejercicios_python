@@ -1,0 +1,26 @@
+[
+    {
+        "equipo": {
+            "nombre": "Real Madrid C.F.",
+            "año": 1902,
+            "estadio": "Santiago Bernabeu",
+            "presidentes": ["Santiago Bernabeu", "Ramón Mendoza", "Florentino Pérez"]
+        }
+    },
+    {
+        "equipo": {
+            "nombre": "Deportivo",
+            "año": 1906,
+            "estadio": "Riazor",
+            "presidentes": []
+        }
+    },
+    {
+        "equipo": {
+            "nombre": "Celta de Vigo",
+            "año": 1923,
+            "estadio": "Balaídos",
+            "presidentes": []
+        }
+    }
+]

@@ -1,29 +1,28 @@
 import tkinter as tk
 from tkinter import messagebox
 
-main_window = tk.Tk()
-main_window.title('Ejemplo pack')
-main_window.geometry('400x200')
+def mostrar_mensaje():
+    messagebox.showinfo("Mensaje", "¡Has presionado Ctrl+M!")
 
-def saludar(event):
-    print('Ha pulsado:', event)
-    try:
-        print(event.widget.unidades) # Leemos el atributo propio
-    except:
-        pass
-    finally:
-        messagebox.showinfo('Ejemplo','Hola')
+def salir():
+    window.quit()
 
-label_1 = tk.Label(main_window, text='Label 1')
-label_1.unidades = 10 # Agregamos un atributo propio
-label_1.pack()
-label_2 = tk.Label(main_window, text='Label 2')
-label_2.unidades = 20 # Agregamos un atributo propio
-label_2.pack()
-label_3 = tk.Label(main_window, text='Label 3')
-label_3.unidades = 30 # Agregamos un atributo propio
-label_3.pack()
+window = tk.Tk()
+window.title("Ejemplo de Aceleradores")
 
-main_window.bind_all('<Button-1>', saludar)
+# Crear menú
+menu_bar = tk.Menu(window)
+window.config(menu=menu_bar)
 
-main_window.mainloop()
+file_menu = tk.Menu(menu_bar, tearoff=0)
+file_menu.add_command(label="Mensaje", command=mostrar_mensaje, accelerator="Ctrl+M")
+file_menu.add_separator()
+file_menu.add_command(label="Salir", command=salir, accelerator="Ctrl+Q")
+
+menu_bar.add_cascade(label="Archivo", menu=file_menu)
+
+# Asignar aceleradores (atajos de teclado)
+window.bind("<Control-m>", lambda event: mostrar_mensaje())
+window.bind("<Control-q>", lambda event: salir())
+
+window.mainloop()
