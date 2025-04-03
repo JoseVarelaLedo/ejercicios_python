@@ -1,28 +1,45 @@
-import tkinter as tk
-from tkinter import messagebox
+import requests
+# Por ahorrar tiempo y espacio no se gestionan los errores (habría que hacerlo)
+# http://www.omdbapi.com/?apikey=95c08eba&s=Superman
+API_KEY = '95c08eba'
+URL = 'https://www.omdbapi.com/'
+MOVIES_PER_PAGE = 10
 
-def mostrar_mensaje():
-    messagebox.showinfo("Mensaje", "¡Has presionado Ctrl+M!")
+def show_movie(movie):
+    print(movie['Title'])
 
-def salir():
-    window.quit()
+def show_page(movies):
+    for movie in movies:
+        show_movie(movie)
 
-window = tk.Tk()
-window.title("Ejemplo de Aceleradores")
+def find_all(title, current_page):
+    request_params = {'apikey':API_KEY, 's':title, 'page':current_page}
+    reply = requests.get(URL, params=request_params)
+    if (reply.status_code==requests.codes.OK):
+        result = reply.json()
+        total_results = int(result['totalResults']) # Número de registros
+        total_pages = total_results / MOVIES_PER_PAGE
+        data = result['Search']
+        show_page(data)
+        current_page+=1
+        if (current_page>total_pages):
+            return
+        find_all(title, current_page)
+    else:
+        print('Ha pasado algo:', reply.status_code)
+    
 
-# Crear menú
-menu_bar = tk.Menu(window)
-window.config(menu=menu_bar)
+def read(title):
+    # Params
+    request_params = {'apikey':API_KEY, 't':title}
+    reply = requests.get(URL, params=request_params)
+    
+    if (reply.status_code==requests.codes.OK):
+        movie = reply.json()
+        show_movie(movie)
+    else:
+        print('Ha pasado algo:', reply.status_code)
 
-file_menu = tk.Menu(menu_bar, tearoff=0)
-file_menu.add_command(label="Mensaje", command=mostrar_mensaje, accelerator="Ctrl+M")
-file_menu.add_separator()
-file_menu.add_command(label="Salir", command=salir, accelerator="Ctrl+Q")
-
-menu_bar.add_cascade(label="Archivo", menu=file_menu)
-
-# Asignar aceleradores (atajos de teclado)
-window.bind("<Control-m>", lambda event: mostrar_mensaje())
-window.bind("<Control-q>", lambda event: salir())
-
-window.mainloop()
+if __name__=='__main__':
+    title = input('Introduce un título de película:')
+    find_all(title, 1)

@@ -52,7 +52,8 @@ class EquipoSegundo:
 compos = EquipoSegundo ('Compostela', 'San Lázaro')
 
 # OJO A LA LLAMADA, utilizando el método codificaxor que creamos a través del atributo default
-print(json.dumps(compos, default=EquipoSegundo.encoder))
+# poniendo el ensure_ascii a False imprime las tildes
+print(json.dumps(compos, default=EquipoSegundo.encoder, ensure_ascii=False))
 
 ###########################################################
 
@@ -67,9 +68,26 @@ class Encoder(json.JSONEncoder):
         if isinstance (object, EquipoSegundo):
             return object.__dict__
         else:
-            return super().default(self)        
+            return super().default(self)  
+
+# Añadimos la operación inversa, la decodificación
+class Decoder (json.JSONDecoder):
+    def __init__(self):
+        json.JSONDecoder.__init__(self, object_hook=self.decoder)
+        
+    def decoder (self, equipo_json):
+        return EquipoSegundo (**equipo_json)
              
 celta = EquipoSegundo ('Celta', 'Balaídos')
 
+# Transformación a objeto Python
 # OJO -> Aquí usamos cls, la clase codificadora
-print(json.dumps(celta, cls=Encoder))
+equipo_json =json.dumps(celta, cls=Encoder, ensure_ascii=False)
+
+print (equipo_json)
+
+# Transformación a Objeto Python
+nuevo_equipo = json.loads (equipo_json, cls=Decoder)
+
+print (type(nuevo_equipo)) # <class '__main__.EquipoSegundo'>
+print (nuevo_equipo.nombre) # Celta
